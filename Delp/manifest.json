@@ -3,11 +3,17 @@
   "name": "Chrome Extension Delp",
   "version": "0.1",
   "content_scripts": [
-  {
-    "matches": [
-      "http://menu.dining.ucla.edu/Menus/*"
-    ],
-    "js": ["jquery-3.1.1.min.js", "content.js"]
-  }
-]
+    {
+      "matches": [
+        "http://menu.dining.ucla.edu/Menus/*"
+      ],
+      "js": ["jquery-3.1.1.min.js", "content.js"]
+    }
+  ],
+  "permissions": [
+    "http://192.241.229.194/"
+  ],
+  "web_accessible_resources": [
+    "http://192.241.229.194/"
+  ] 
 }
