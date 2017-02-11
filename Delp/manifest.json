@@ -5,7 +5,7 @@
   "content_scripts": [
   {
     "matches": [
-      "http://menu.dining.ucla.edu/Menus"
+      "http://menu.dining.ucla.edu/Menus/*"
     ],
     "js": ["jquery-3.1.1.min.js", "content.js"]
   }
