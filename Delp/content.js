@@ -1,0 +1,1 @@
+alert("You are visiting UCLA dining menu!");
