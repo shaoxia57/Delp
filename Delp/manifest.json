@@ -7,7 +7,7 @@
     "matches": [
       "http://menu.dining.ucla.edu/Menus"
     ],
-    "js": ["content.js"]
+    "js": ["jquery-3.1.1.min.js", "content.js"]
   }
 ]
 }
