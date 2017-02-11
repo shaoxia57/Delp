@@ -1,0 +1,15 @@
+{
+  "name": "delp",
+  "version": "1.0.0",
+  "description": "Hack on the Hill 2 UCLA project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Qianmeng Chen",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.1",
+    "mongoose": "^4.8.2"
+  }
+}
