@@ -2,6 +2,9 @@
   "manifest_version": 2,
   "name": "Chrome Extension Delp",
   "version": "0.1",
+  "icons": {
+    "256": "icon.png"
+  },
   "content_scripts": [
     {
       "matches": [
@@ -11,9 +14,11 @@
     }
   ],
   "permissions": [
-    "http://192.241.229.194/"
+    "http://192.241.229.194/",
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
   ],
   "web_accessible_resources": [
-    "http://192.241.229.194/"
+    "http://192.241.229.194/",
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
   ] 
 }

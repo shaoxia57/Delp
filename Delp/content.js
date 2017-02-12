@@ -1,6 +1,4 @@
 
-//alert("You are visiting UCLA dining menu!");
-
 /*
 action: 'fetch', 'upvote', 'downvote'
 name: String
@@ -21,15 +19,33 @@ function accessMenuItem(action, name, next) {
 	}
 }
 
-
 function validString(str) {
 	return str.replace(/\s/g, "").replace(/&/g, "AMP");
 }
 
-var voteMap = new Map();
+var voteSet = new Set();
+var itemMap = new Map();
+
+class Dish {
+	constructor(str, element, upVotes, downVotes) {
+		this.str = str;
+		this.element = element;
+		this.upVotes = upVotes;
+		this.downVotes = downVotes;
+	}
+	percentage() {
+		return this.upVotes/(this.upVotes + this.downVotes);
+	}
+	isNew() {
+		return (this.upVotes + this.downVotes) <= 5;
+	}
+	isPopular() {
+		return (! this.isNew()) && (this.percentage() > 0.8);
+	}
+}
 
 var Utils = {
-	getUpvoteOnClickString: function(str, el, cls) {
+	getUpvoteButton: function(str, el, cls) {
 		if (cls === undefined) {
 			cls = "webcode";
 		}
@@ -42,18 +58,24 @@ var Utils = {
 		
 		var $input = $.parseHTML(input_text)[1];
 		
+		var $num = $("<span></span>");
+		accessMenuItem("fetch", str, function(obj) {
+			$num.text(" " + obj["upVotes"] + " ");
+		}.bind(this));
+		
 		$input.addEventListener("click", function() {
-			if (! voteMap.has(el)) {
+			if (! voteSet.has(str)) {
 				accessMenuItem("upvote", str, function(obj) {
 					el.children(".counter").text(obj["upVotes"] + " people enjoy this dish!");
+					$num.text(" " + obj["upVotes"] + " ")
 				}.bind(this));
-				voteMap.set(el, 0);
+				voteSet.add(str);
 			}
 		});
 		
-		return $input;
+		return $($input).add($num);
 	},
-	getDownvoteOnClickString: function(str, el, cls) {
+	getDownvoteButton: function(str, el, cls) {
 		if (cls === undefined) {
 			cls = "webcode";
 		}
@@ -65,21 +87,34 @@ var Utils = {
 		src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA3UlEQVQ4T2NkoBAwUqifAWzAcx+bAwwMDPYMDAyODH/+PGBgZt7PwMiogG74fwaGD8yMfxPFNx/fAJPDNAAisx+ny/7/fyC59agi+QZAdDpKbjkCcjUWLxByAUT+gOSWI46UGMDA8OePouSOEw9IDwOo5/8z/JsoteVYAfkG/P+/UWrr0QDyDPjP8JGJ6W8CKDoxEtL7AAOB73+4DzAyMOrDogrmXGxRizUlYhiCFvfIBuFMyuiGMP/7Zyi27dgFdFfgzQsohkCjjSQDQIpBhvz4w2MAS3kkG0AotwIAH9JsEVioprIAAAAASUVORK5CYII=" />`;
 		
 		var $input = $.parseHTML(input_text)[1];
+		var $num = $("<span></span>");
+		
+		accessMenuItem("fetch", str, function(obj) {
+			$num.text(" " + obj["downVotes"] + " ");
+		}.bind(this));
 		
 		$input.addEventListener("click", function() {
-			if (! voteMap.has(el)) {
+			if (! voteSet.has(str)) {
 				accessMenuItem("downvote", str, function(obj) {
 					el.children(".counter").text(obj["downVotes"] + " people dislike this dish...");
 					//$("#" + validString(str) + "_up").val(obj["downVotes"] + " people dislike this dish...");
+					$num.text(obj[" " + obj["downVotes"] + " "]);
 				}.bind(this));
-				voteMap.set(el, 0);
+				voteSet.add(str);
 			}
 		});
-		return $input;
+		return $($input).add($num);
 	}
 }
 
-$(".menu-item").each(function(index) {
+
+//////////////////////////////////
+//THUMBS
+//////////////////////////////////
+let len = $(".menu-item").length;
+let canSummarize = false;
+
+$(".menu-item").each(function(index, elm) {
 	let str = $(this).children("span.tooltip-target-wrapper").children("a.recipelink").text();
 	str = str.replace(/^\s+|\s+$/, "");
 	
@@ -98,11 +133,48 @@ $(".menu-item").each(function(index) {
 		$(this).children(".item-description-wrapper").children(".item-description").append("<div class=\"tt-prodwebcode\"><img id=\"" + validString(str) + "_down" + "\" alt=\"AEGG\" class=\"webcode\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA3UlEQVQ4T2NkoBAwUqifAWzAcx+bAwwMDPYMDAyODH/+PGBgZt7PwMiogG74fwaGD8yMfxPFNx/fAJPDNAAisx+ny/7/fyC59agi+QZAdDpKbjkCcjUWLxByAUT+gOSWI46UGMDA8OePouSOEw9IDwOo5/8z/JsoteVYAfkG/P+/UWrr0QDyDPjP8JGJ6W8CKDoxEtL7AAOB73+4DzAyMOrDogrmXGxRizUlYhiCFvfIBuFMyuiGMP/7Zyi27dgFdFfgzQsohkCjjSQDQIpBhvz4w2MAS3kkG0AotwIAH9JsEVioprIAAAAASUVORK5CYII=\" width=\"16\" height=\"16\" />&nbsp;<span class=\"counter\">" + obj["downVotes"] + " people dislike this dish...</span></div>");
 		downvoteCountElement = $(this).children(".item-description-wrapper").children(".item-description").children().last();
 		
-		$(this).children("span.tooltip-target-wrapper").append(Utils.getUpvoteOnClickString(str, upvoteCountElement));
-		//voteMap.set(upvoteCountElement, false);
-		$(this).children("span.tooltip-target-wrapper").append(Utils.getDownvoteOnClickString(str, downvoteCountElement));
-		//voteMap.set(downvoteCountElement, false);
+		let iconElements = $(this).children("span.tooltip-target-wrapper");
+		itemMap.set(str, new Dish(str, iconElements, obj["upVotes"], obj["downVotes"]));
+		//console.log(itemMap);
+		
+		$(this).children("span.tooltip-target-wrapper").append(Utils.getUpvoteButton(str, upvoteCountElement));
+		$(this).children("span.tooltip-target-wrapper").append(Utils.getDownvoteButton(str, downvoteCountElement));
+		
+		if (index === len-1) {
+			canSummarize = true;
+		}
 	}.bind(this));	
 });
 
-//alert("updated?2");
+(function summary() {
+	if (canSummarize) {
+		let max_dish_name = "";
+		let max_dish = null;
+		//console.log("number");
+		for (let [str, dish] of itemMap) {
+			if (max_dish_name === "") {
+				max_dish_name = str;
+				max_dish = dish;
+			} else {
+				if (dish.isNew()) {
+					dish.element.append("<span style=\"font-weight: bold; color: green\">NEW!  </span>");
+				} else {
+					if (dish.isPopular()) {
+						dish.element.append("<span style=\"font-weight: bold; color: orange\">POPULAR!  </span>");
+					}
+					if (dish.percentage() > max_dish.percentage()) {
+						max_dish_name = str;
+						max_dish = dish;
+					}
+				} 
+			}
+		}
+		if (max_dish_name !== "" && (! max_dish.isNew())) {
+			max_dish.element.append("<span style=\"font-weight: bold; color: red\">BEST!!!  </span>")
+		}
+		//console.log(max_dish_name + " the name");
+	} else {
+		//console.log("Timeout...");
+		setTimeout(summary, 500);
+	}
+})();
