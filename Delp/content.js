@@ -82,7 +82,7 @@ var Utils = {
 		
 		var input_text = `
 		<input type="image" 
-		alt="upvote" 
+		alt="downvote" 
 		class="${cls}" 
 		src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA3UlEQVQ4T2NkoBAwUqifAWzAcx+bAwwMDPYMDAyODH/+PGBgZt7PwMiogG74fwaGD8yMfxPFNx/fAJPDNAAisx+ny/7/fyC59agi+QZAdDpKbjkCcjUWLxByAUT+gOSWI46UGMDA8OePouSOEw9IDwOo5/8z/JsoteVYAfkG/P+/UWrr0QDyDPjP8JGJ6W8CKDoxEtL7AAOB73+4DzAyMOrDogrmXGxRizUlYhiCFvfIBuFMyuiGMP/7Zyi27dgFdFfgzQsohkCjjSQDQIpBhvz4w2MAS3kkG0AotwIAH9JsEVioprIAAAAASUVORK5CYII=" />`;
 		
@@ -97,8 +97,7 @@ var Utils = {
 			if (! voteSet.has(str)) {
 				accessMenuItem("downvote", str, function(obj) {
 					el.children(".counter").text(obj["downVotes"] + " people dislike this dish...");
-					//$("#" + validString(str) + "_up").val(obj["downVotes"] + " people dislike this dish...");
-					$num.text(obj[" " + obj["downVotes"] + " "]);
+					$num.text(" " + obj["downVotes"] + " ");
 				}.bind(this));
 				voteSet.add(str);
 			}
